@@ -42,6 +42,7 @@ namespace Hangman
 
         static Random rnd = new Random();
         static int wordIndex = 0;
+        static int lives = 10;
 
         static void Main(string[] args)
         {
@@ -80,6 +81,7 @@ namespace Hangman
                     switch (action)
                     {
                         case 1:
+                            SelectDifficulty();
                             StartGame();
                             break;
                         case 2:
@@ -104,6 +106,41 @@ namespace Hangman
             }
         }
 
+        static void SelectDifficulty()
+        {
+            while (true)
+            {
+                Console.WriteLine("Bitte wähle eine Schwierigkeit aus:");
+                Console.WriteLine("[1] Einfach (15 Versuche)");
+                Console.WriteLine("[2] Mittel (10 Versuche)");
+                Console.WriteLine("[3] Schwer (5 Versuche)");
+                Console.Write("Schwierigkeit: ");
+
+                if (int.TryParse(Console.ReadLine(), out int difficulty))
+                {
+                    switch (difficulty)
+                    {
+                        case 1:
+                            lives = 15;
+                            return;
+                        case 2:
+                            lives = 10;
+                            return;
+                        case 3:
+                            lives = 5;
+                            return;
+                        default:
+                            Console.WriteLine("Ungültige Eingabe! Bitte erneut versuchen.");
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Ungültige Eingabe! Bitte gib eine Zahl ein.");
+                }
+            }
+        }
+
         static void StartGame()
         {
             if (wordIndex >= words.Count)
@@ -119,7 +156,7 @@ namespace Hangman
 
         static void GameLoop(string word)
         {
-            int live = 10;
+            int live = lives;
             StringBuilder hiddenWord = new StringBuilder(new string('_', word.Length));
 
             while (true)
