@@ -31,23 +31,32 @@ namespace Hangman
                 Console.WriteLine();
 
                 Console.Write("Aktion: ");
-                int action = Convert.ToInt32(Console.ReadLine());
 
-                bool end = false;
-
-                switch (action)
+                if (int.TryParse(Console.ReadLine(), out int action))
                 {
-                    case 1:
-                        StartGame();
+                    bool end = false;
+
+                    switch (action)
+                    {
+                        case 1:
+                            StartGame();
+                            break;
+                        case 2:
+                            end = true;
+                            break;
+                        default:
+                            Console.WriteLine("Ungültige Eingabe! Bitte erneut versuchen.");
+                            break;
+                    }
+
+                    if (end)
+                    {
                         break;
-                    case 2:
-                        end = true;
-                        break;
+                    }
                 }
-
-                if (end)
+                else
                 {
-                    break;
+                    Console.WriteLine("Ungültige Eingabe! Bitte gib eine Zahl ein.");
                 }
 
                 Console.Clear();
@@ -79,7 +88,6 @@ namespace Hangman
             };
 
             Random rnd = new Random();
-
             int index = rnd.Next(0, words.Length);
             string word = words[index].ToLower();
             GameLoop(word);
@@ -88,29 +96,29 @@ namespace Hangman
         static void GameLoop(string word)
         {
             int live = 10;
-            string hiddenWord = "";
-
-            for (int i = 0; i < word.Length; i++)
-            {
-                hiddenWord += "_";
-            }
+            StringBuilder hiddenWord = new StringBuilder(new string('_', word.Length));
 
             while (true)
             {
                 Console.Clear();
                 Console.WriteLine($"Gesuchtes Wort: {hiddenWord}");
                 Console.Write("Noch übrige Versuche: ");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(new string('X', live));
+                Console.ResetColor();
 
-                for (int i = 0; i < live; i++)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.Write("X");
-                    Console.ResetColor();
-                }
-
-                Console.WriteLine();
                 Console.Write("Buchstabe: ");
-                char character = Convert.ToChar(Console.ReadLine().ToLower());
+                char character;
+
+                try
+                {
+                    character = Convert.ToChar(Console.ReadLine().ToLower());
+                }
+                catch
+                {
+                    Console.WriteLine("Ungültige Eingabe! Bitte gib nur einen Buchstaben ein.");
+                    continue;
+                }
 
                 bool foundCharInWord = false;
 
@@ -118,33 +126,14 @@ namespace Hangman
                 {
                     if (word[i] == character)
                     {
+                        hiddenWord[i] = character;
                         foundCharInWord = true;
-                        break;
                     }
                 }
 
-                string tempHiddenWord = hiddenWord;
-                hiddenWord = "";
-
                 if (foundCharInWord)
                 {
-                    for (int i = 0; i < word.Length; i++)
-                    {
-                        if (word[i] == character)
-                        {
-                            hiddenWord += character;
-                        }
-                        else if (tempHiddenWord[i] != '_')
-                        {
-                            hiddenWord += tempHiddenWord[i];
-                        }
-                        else
-                        {
-                            hiddenWord += '_';
-                        }
-                    }
-
-                    if (hiddenWord == word)
+                    if (hiddenWord.ToString() == word)
                     {
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -157,8 +146,6 @@ namespace Hangman
                 }
                 else
                 {
-                    hiddenWord = tempHiddenWord;
-
                     if (live > 0)
                     {
                         live -= 1;
@@ -168,6 +155,7 @@ namespace Hangman
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine("GAMEOVER!!");
+                        Console.WriteLine($"Das Word war: {word}");
                         Console.ReadKey();
                         Console.ResetColor();
                         break;
