@@ -8,9 +8,50 @@ namespace Hangman
 {
     class Program
     {
+        static List<string> words = new List<string>
+        {
+            "Lotus",
+            "Personenkraftwagen",
+            "Lastkraftwagen",
+            "Flugzeug",
+            "Flammkuchen",
+            "Donut",
+            "Schüssel",
+            "Pistole",
+            "Bundeswehr",
+            "Kinderriegel",
+            "Uhr",
+            "Tasse",
+            "Geld",
+            "Kofferraum",
+            "Handy",
+            "Schlüssel",
+            "Wasser",
+            "Turnschuhe",
+            "Computer",
+            "Programmierung",
+            "Kopfhörer",
+            "Maus",
+            "Tastatur",
+            "Monitor",
+            "Drucker",
+            "Scanner",
+            "Tablet",
+            "Smartphone"
+        };
+
+        static Random rnd = new Random();
+        static int wordIndex = 0;
+
         static void Main(string[] args)
         {
+            ShuffleWords();
             MainMenu();
+        }
+
+        static void ShuffleWords()
+        {
+            words = words.OrderBy(x => rnd.Next()).ToList();
         }
 
         static void MainMenu()
@@ -65,31 +106,14 @@ namespace Hangman
 
         static void StartGame()
         {
-            string[] words = new string[]
+            if (wordIndex >= words.Count)
             {
-                "Lotus",
-                "Personenkraftwagen",
-                "Lastkraftwagen",
-                "Flugzeug",
-                "Flammkuchen",
-                "Donut",
-                "Schüssel",
-                "Pistole",
-                "Bundeswehr",
-                "Kinderriegel",
-                "Uhr",
-                "Tasse",
-                "Geld",
-                "Kofferraum",
-                "Handy",
-                "Schlüssel",
-                "Wasser",
-                "Turnschuhe"
-            };
+                ShuffleWords();
+                wordIndex = 0;
+            }
 
-            Random rnd = new Random();
-            int index = rnd.Next(0, words.Length);
-            string word = words[index].ToLower();
+            string word = words[wordIndex].ToLower();
+            wordIndex++;
             GameLoop(word);
         }
 
