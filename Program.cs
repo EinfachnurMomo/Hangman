@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace Hangman
 {
@@ -59,14 +55,16 @@ namespace Hangman
         {
             while (true)
             {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("### Welcome to Hangman ###");
                 Console.WriteLine("##########################");
+                Console.ResetColor();
                 Console.WriteLine();
 
                 Console.WriteLine("Bitte wähle eine Aktion aus:");
 
                 Console.ForegroundColor = ConsoleColor.Green;
-
                 Console.WriteLine("[1] Spielen");
                 Console.WriteLine("[2] Beenden");
                 Console.ResetColor();
@@ -88,7 +86,9 @@ namespace Hangman
                             end = true;
                             break;
                         default:
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Ungültige Eingabe! Bitte erneut versuchen.");
+                            Console.ResetColor();
                             break;
                     }
 
@@ -99,7 +99,9 @@ namespace Hangman
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Ungültige Eingabe! Bitte gib eine Zahl ein.");
+                    Console.ResetColor();
                 }
 
                 Console.Clear();
@@ -110,10 +112,13 @@ namespace Hangman
         {
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine("Bitte wähle eine Schwierigkeit aus:");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("[1] Einfach (15 Versuche)");
                 Console.WriteLine("[2] Mittel (10 Versuche)");
                 Console.WriteLine("[3] Schwer (5 Versuche)");
+                Console.ResetColor();
                 Console.Write("Schwierigkeit: ");
 
                 if (int.TryParse(Console.ReadLine(), out int difficulty))
@@ -130,13 +135,17 @@ namespace Hangman
                             lives = 5;
                             return;
                         default:
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Ungültige Eingabe! Bitte erneut versuchen.");
+                            Console.ResetColor();
                             break;
                     }
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Ungültige Eingabe! Bitte gib eine Zahl ein.");
+                    Console.ResetColor();
                 }
             }
         }
@@ -158,15 +167,24 @@ namespace Hangman
         {
             int live = lives;
             StringBuilder hiddenWord = new StringBuilder(new string('_', word.Length));
+            List<char> guessedChars = new List<char>();
 
             while (true)
             {
                 Console.Clear();
+                Console.WriteLine("### Hangman ###");
+                Console.WriteLine();
                 Console.WriteLine($"Gesuchtes Wort: {hiddenWord}");
                 Console.Write("Noch übrige Versuche: ");
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine(new string('X', live));
                 Console.ResetColor();
+                Console.WriteLine();
+
+                if (guessedChars.Count > 0)
+                {
+                    Console.WriteLine($"Falsch erkannte Buchstaben: {string.Join(", ", guessedChars)}");
+                }
 
                 Console.Write("Buchstabe: ");
                 char character;
@@ -177,9 +195,21 @@ namespace Hangman
                 }
                 catch
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Ungültige Eingabe! Bitte gib nur einen Buchstaben ein.");
+                    Console.ResetColor();
                     continue;
                 }
+
+                if (guessedChars.Contains(character))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Dieser Buchstabe wurde bereits geraten.");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                guessedChars.Add(character);
 
                 bool foundCharInWord = false;
 
